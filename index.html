@@ -200,23 +200,40 @@
 
   /* ===== 六式卡片 ===== */
   .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 16px; }
+  .cards.four { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
   .card {
     background: var(--panel); padding: 18px;
     transition: transform .1s steps(3);
   }
   .card:hover { transform: translate(-2px, -2px); }
-  .card h3 { font-size: 16px; color: var(--yellow); margin-bottom: 8px; }
+  .card h3 { font-size: 17px; color: var(--yellow); margin-bottom: 8px; }
   .card h3 .no {
     display: inline-block; background: var(--red); color: #fff;
-    border: 2px solid var(--ink); padding: 0 7px; margin-right: 8px; font-size: 13px;
+    border: 2px solid var(--ink); padding: 0 7px; margin-right: 8px; font-size: 14px;
   }
-  .card p { font-size: 13px; color: #c8dcbF; color: #c8dcbf; }
-  .card .verdict { margin-top: 8px; font-size: 12px; color: #ff9d9a; }
+  .card p { font-size: 15px; color: #c8dcbf; }
+  .card .verdict { margin-top: 8px; font-size: 13px; color: #ff9d9a; }
+  .card.trap h3 { color: #ff8a80; }
 
-  /* ===== 避坑 ===== */
-  .traps { background: var(--panel2); padding: 22px 24px; }
-  .traps li { margin: 12px 0 12px 1.4em; font-size: 13px; color: #d5c9c9; }
-  .traps strong { color: #ff8a80; }
+  /* ===== 开瓜图鉴(页面右上角) ===== */
+  #collection {
+    position: fixed; top: 12px; right: 12px; z-index: 60;
+    background: rgba(13,31,12,.92);
+    border: 3px solid var(--ink);
+    box-shadow: 4px 4px 0 rgba(0,0,0,.45);
+    padding: 8px 10px 6px;
+  }
+  #collection .coll-title { font-size: 13px; color: var(--yellow); margin-bottom: 6px; }
+  #collection.all .coll-title { color: #ffd54f; }
+  #coll-items { display: flex; gap: 8px; flex-wrap: wrap; }
+  .coll-item { text-align: center; }
+  .coll-item canvas { width: 46px; height: 46px; display: block; border: 2px solid var(--ink); background: #24401e; }
+  .coll-item .lbl { font-size: 12px; color: var(--paper); margin-top: 2px; display: block; }
+  #coll-count { font-size: 12px; color: #8fae88; margin-top: 6px; }
+
+  /* 追踪点呼吸提示("对准了,别动") */
+  .tdot.pulse { background: #7d9a76; animation: pulse .5s steps(2) infinite; }
+  @keyframes pulse { 50% { background: var(--yellow); } }
 
   footer {
     text-align: center; color: #5c7a55; font-size: 12px;
@@ -301,14 +318,29 @@
   <!-- ========== 避坑指南 ========== -->
   <section>
     <h2>避坑指南 · 还得看秤</h2>
-    <ul class="traps pxb">
-      <li><strong>翻过秤盘看一眼。</strong>当年摊主在秤底下粘吸铁石,十五斤的瓜根本没十五斤。如今电子秤也有“密码秤”,可以要求先称手机验秤(手机重量上网一查便知)。</li>
-      <li><strong>“不甜不要钱”听听就好。</strong>摊主拍胸脯说“我开水果摊的,能卖给你生瓜蛋子?”——能不能,切开才知道。尽量现场开瓜,或买已切开的半个。</li>
-      <li><strong>别贪最便宜的一堆。</strong>明显低于行情的瓜,可能是催熟、过熟或磕碰瓜。两块钱一斤的瓜没有了,但一分钱一分货的道理还在。</li>
-      <li><strong>拍瓜可以,别上刀。</strong>对瓜不满意,换一个摊主就是,千万别学华强掀摊子——治安拘留不包熟。</li>
-    </ul>
+    <div class="cards four">
+      <div class="card trap pxb"><h3>⚖️ 翻过秤盘</h3>
+        <p>当年摊主在秤底下粘吸铁石,十五斤的瓜根本没十五斤。如今电子秤也有“密码秤”,可以要求先称手机验秤(手机重量上网一查便知)。</p>
+        <p class="verdict">★ 买瓜先看秤,不当冤大头</p></div>
+      <div class="card trap pxb"><h3>🗣️ 不甜不要钱?</h3>
+        <p>摊主拍胸脯说“我开水果摊的,能卖给你生瓜蛋子?”——能不能,切开才知道。尽量现场开瓜,或买已切开的半个。</p>
+        <p class="verdict">★ 包甜听听就好,切开才算数</p></div>
+      <div class="card trap pxb"><h3>💰 别贪便宜堆</h3>
+        <p>明显低于行情的瓜,可能是催熟、过熟或磕碰瓜。两块钱一斤的瓜没有了,但一分钱一分货的道理还在。</p>
+        <p class="verdict">★ 便宜得反常,必有蹊跷</p></div>
+      <div class="card trap pxb"><h3>🔪 拍瓜别上刀</h3>
+        <p>对瓜不满意,换一个摊主就是,千万别学华强掀摊子——治安拘留不包熟。</p>
+        <p class="verdict">★ 和气生财,不兴动刀</p></div>
+    </div>
   </section>
 </main>
+
+<!-- 开瓜图鉴:右上角固定统计 -->
+<div id="collection">
+  <div class="coll-title">🍉 开瓜图鉴</div>
+  <div id="coll-items"></div>
+  <div id="coll-count">共开 0 个瓜</div>
+</div>
 
 <footer>
   华强买瓜像素挑瓜指南 · 仅供娱乐,买瓜请遵纪守法 · 和气生财,不兴动刀
@@ -523,6 +555,53 @@ function drawCutHalf(id, side, type) {
   }
 }
 
+/* ---- 开瓜图鉴:右上角统计 ---- */
+var TYPE_LABEL = { ripe: '好瓜', raw: '生瓜', bad: '坏瓜', hollow: '空瓜' };
+var openedCounts = { ripe: 0, raw: 0, bad: 0, hollow: 0 };
+
+function drawMelonIcon(cv, type) {
+  var ctx = cv.getContext('2d');
+  C(ctx, 24, 24, 22, '#1b5e20');
+  C(ctx, 24, 24, 18, '#e8f5e9');
+  var flesh = { ripe: '#ee4036', raw: '#f6e0e0', bad: '#8d4e41', hollow: '#ee4036' }[type];
+  C(ctx, 24, 24, 15, flesh);
+  if (type === 'hollow') C(ctx, 24, 24, 8, '#f3e2c7');
+  if (type === 'ripe') {
+    [[18, 17], [29, 16], [16, 28], [30, 28], [23, 24]].forEach(function (p) {
+      R(ctx, p[0], p[1], 2, 4, '#262626');
+    });
+  }
+  if (type === 'raw') {
+    R(ctx, 18, 20, 3, 3, '#d9b8b8'); R(ctx, 27, 27, 3, 3, '#d9b8b8');
+  }
+  if (type === 'bad') {
+    C(ctx, 19, 21, 4, '#5d3325'); C(ctx, 28, 28, 3, '#5d3325');
+    R(ctx, 18, 33, 2, 9, '#5d3325');
+  }
+}
+
+function addToCollection(type) {
+  openedCounts[type]++;
+  var item = document.createElement('div');
+  item.className = 'coll-item';
+  var cv = document.createElement('canvas');
+  cv.width = 48; cv.height = 48;
+  drawMelonIcon(cv, type);
+  var lbl = document.createElement('span');
+  lbl.className = 'lbl';
+  lbl.textContent = TYPE_LABEL[type];
+  item.appendChild(cv); item.appendChild(lbl);
+  $('coll-items').appendChild(item);
+
+  var total = openedCounts.ripe + openedCounts.raw + openedCounts.bad + openedCounts.hollow;
+  $('coll-count').textContent = '共开 ' + total + ' 个 · 好' + openedCounts.ripe +
+    ' 生' + openedCounts.raw + ' 坏' + openedCounts.bad + ' 空' + openedCounts.hollow;
+  if (openedCounts.ripe && openedCounts.raw && openedCounts.bad && openedCounts.hollow) {
+    $('collection').classList.add('all');
+    $('collection').querySelector('.coll-title').textContent = '🏆 图鉴集齐!';
+  }
+}
+
 /* ================================================================
  * 二、音频:拍瓜 x4 / 劈瓜 / 对白哔哔
  * ================================================================ */
@@ -586,6 +665,61 @@ function blip() {
   gn.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
   o.connect(gn); gn.connect(ac.destination);
   o.start(t); o.stop(t + 0.05);
+}
+
+/* 疯狂戴夫式外星语:每个字一个"哇啦"音节,瓜农低沉 / 华强略高 */
+function gibSyllable(who, code) {
+  var ac = actx(), t = ac.currentTime;
+  var base = who === 'F' ? 95 : 145;
+  var f = base * (0.9 + (code % 7) * 0.07) * (0.96 + Math.random() * 0.08);
+  var o = ac.createOscillator();
+  o.type = 'sawtooth';
+  o.frequency.setValueAtTime(f * 0.85, t);
+  o.frequency.linearRampToValueAtTime(f * 1.2, t + 0.05);
+  o.frequency.linearRampToValueAtTime(f * 0.8, t + 0.12);
+  var bp = ac.createBiquadFilter();
+  bp.type = 'bandpass';
+  bp.frequency.value = 500 + (code % 5) * 260;
+  bp.Q.value = 2.2;
+  var g = ac.createGain();
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(0.18, t + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+  o.connect(bp); bp.connect(g); g.connect(ac.destination);
+  o.start(t); o.stop(t + 0.17);
+}
+
+/* 揭晓戏剧性配乐:好瓜欢快 / 生瓜下滑 / 坏瓜刺耳 / 空瓜滑稽 */
+function sting(kind) {
+  var ac = actx(), t0 = ac.currentTime;
+  function note(f, t, dur, type, g0) {
+    var o = ac.createOscillator(), gn = ac.createGain();
+    o.type = type || 'square';
+    o.frequency.value = f;
+    gn.gain.setValueAtTime(0.0001, t);
+    gn.gain.exponentialRampToValueAtTime(g0 || 0.1, t + 0.02);
+    gn.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    o.connect(gn); gn.connect(ac.destination);
+    o.start(t); o.stop(t + dur + 0.05);
+  }
+  if (kind === 'ripe') {
+    [523, 659, 784, 1047].forEach(function (f, i) { note(f, t0 + i * 0.11, 0.24); });
+  } else if (kind === 'raw') {
+    [392, 370, 349, 311].forEach(function (f, i) { note(f, t0 + i * 0.17, 0.26, 'triangle'); });
+  } else if (kind === 'bad') {
+    note(110, t0, 0.55, 'sawtooth', 0.09); note(117, t0, 0.55, 'sawtooth', 0.09);
+    note(82, t0 + 0.5, 0.5, 'sawtooth', 0.09);
+  } else if (kind === 'hollow') {
+    var o = ac.createOscillator(), gn = ac.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(330, t0);
+    o.frequency.exponentialRampToValueAtTime(110, t0 + 0.35);
+    gn.gain.setValueAtTime(0.14, t0);
+    gn.gain.exponentialRampToValueAtTime(0.001, t0 + 0.5);
+    o.connect(gn); gn.connect(ac.destination);
+    o.start(t0); o.stop(t0 + 0.55);
+    note(210, t0 + 0.32, 0.4, 'sine', 0.06);
+  }
 }
 
 /* ================================================================
@@ -724,7 +858,7 @@ function showDlgLine() {
   dlgTimer = setInterval(function () {
     i++;
     span.textContent = full.slice(0, i);
-    if (i % 2 === 0) blip();
+    if (ln.gib) gibSyllable(ln.who, full.charCodeAt(i - 1));   // 外星语配音,逐字对应
     if (i >= full.length) finishType(ln);
   }, 45);
 }
@@ -790,6 +924,18 @@ function randomType() {
   var r = Math.random(), acc = 0;
   for (var k in TYPES) { acc += TYPES[k].w; if (r < acc) return k; }
   return 'ripe';
+}
+/* 前四瓜保底:好/生/坏/空洗牌后各出现一次,之后随机 */
+var roundNum = 0;
+var firstFour = (function () {
+  var a = ['ripe', 'raw', 'bad', 'hollow'];
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+})();
+function nextType() {
+  return roundNum < 4 ? firstFour[roundNum] : randomType();
 }
 
 var glCanvas = $('gl');
@@ -1016,11 +1162,11 @@ function ripple() {
 }
 
 /* 进度追踪 */
-var seen = {}, patCount = 0, weighed = false;
+var seen = {}, patCount = 0, weighed = false, pulseFeat = null;
 function renderTracker() {
   var h = '<b>看</b>';
   ['stripe', 'spot', 'navel', 'stem'].forEach(function (f) {
-    h += '<span class="tdot' + (seen[f] ? ' on' : '') + '"></span>';
+    h += '<span class="tdot' + (seen[f] ? ' on' : (pulseFeat === f ? ' pulse' : '')) + '"></span>';
   });
   h += ' <b>拍</b><span class="tdot' + (patCount > 0 ? ' on' : '') + '"></span><span class="tdot' + (patCount > 1 ? ' on' : '') + '"></span>';
   h += ' <b>掂</b><span class="tdot' + (weighed ? ' on' : '') + '"></span>';
@@ -1032,7 +1178,13 @@ function renderTracker() {
  * ================================================================ */
 var state = 'boot';
 var currentType = 'ripe';
-var lookCand = null, lookSince = 0, lastFrameT = 0;
+var lookCand = null, lookSince = 0, lastFrameT = 0, lookElapsed = 0;
+var LOOK_HELP = {
+  stripe: '让瓜身正对着你——看侧面的条纹,别上下翻转。',
+  spot: '瓜斑是贴地那块发黄的印子,按住转一圈找找。',
+  navel: '瓜脐在瓜的底部,把瓜往下翻转看看。',
+  stem: '瓜蒂在瓜的顶上,把瓜往上翻转看看。'
+};
 
 function setHint(t) { hint.textContent = t; }
 
@@ -1044,6 +1196,7 @@ function setHint(t) { hint.textContent = t; }
   camera.lookAt(0, 0, 0);
 
   if (state === 'look') {
+    lookElapsed += dt;
     var camDir = camera.position.clone().normalize();
     var cand = null;
     var dirs = {
@@ -1056,23 +1209,47 @@ function setHint(t) { hint.textContent = t; }
       var w = dirs[k].clone().applyQuaternion(melonGroup.quaternion);
       var d = w.dot(camDir);
       if (d > maxAll) maxAll = d;
-      if (d > 0.90 && d > maxDot) { maxDot = d; cand = k; }
+      if (d > 0.86 && d > maxDot) { maxDot = d; cand = k; }   /* 阈值放宽:0.90→0.86 */
     }
-    if (!cand && maxAll < 0.35) cand = 'stripe';
+    if (!cand && maxAll < 0.5) cand = 'stripe';               /* 纹路窗口放宽:0.35→0.5 */
+
+    /* 对准部位时追踪点呼吸闪烁,提示"别动" */
+    var pf = (cand && !seen[cand]) ? cand : null;
+    if (pf !== pulseFeat) { pulseFeat = pf; renderTracker(); }
+
     if (cand && !seen[cand]) {
       if (cand === lookCand) {
         lookSince += dt;
-        if (lookSince > 600) {
-          seen[cand] = true; renderTracker();
+        if (lookSince > 450) {                                /* 触发时间 600→450ms */
+          seen[cand] = true;
+          pulseFeat = null; renderTracker();
           say('H', pick(LINES.look[cand][currentType]));
+          lookElapsed = 0;
+          lookCand = null; lookSince = 0;
           if (seen.stripe && seen.spot && seen.navel && seen.stem) {
             state = 'lookdone';
             setHint('部位看完了……');
             setTimeout(enterPat, 1400);
           }
         }
-      } else { lookCand = cand; lookSince = 0; }
-    } else { lookCand = null; lookSince = 0; }
+      } else if (lookCand === null) {
+        lookCand = cand; lookSince = 0;
+      } else {
+        /* 切到别的部位:保留一半进度,不再一刀切清零 */
+        lookCand = cand; lookSince = Math.min(lookSince * 0.5, 200);
+      }
+    } else if (lookCand) {
+      /* 手滑移开:进度缓慢衰减,而不是立刻清零 */
+      lookSince -= dt;
+      if (lookSince <= 0) { lookCand = null; lookSince = 0; }
+    }
+
+    /* 卡关 10 秒,华强支招 */
+    if (lookElapsed > 10000) {
+      lookElapsed = 0;
+      var missing = ['stripe', 'spot', 'navel', 'stem'].filter(function (f) { return !seen[f]; });
+      if (missing.length) say('H', '找不到?' + LOOK_HELP[missing[0]]);
+    }
   }
   renderer.render(scene, camera);
 })(0);
@@ -1157,6 +1334,8 @@ function chop() {
       cutR.style.transform = 'translate(20px, 8px) rotate(7deg)';
     });
     juice(TYPES[currentType].juice);
+    sting(currentType);              // 戏剧性配乐
+    addToCollection(currentType);    // 图鉴+1
     setTimeout(function () {
       state = 'post';
       playDialog(LINES.post[currentType], function () {
@@ -1170,6 +1349,7 @@ function chop() {
 /* ---- 各阶段入口 ---- */
 function enterLook() {
   state = 'look';
+  lookElapsed = 0; lookCand = null; lookSince = 0; pulseFeat = null;
   setHint('按住拖动旋转西瓜,看清纹路 / 瓜斑 / 瓜脐 / 瓜蒂');
 }
 function enterPat() {
@@ -1198,8 +1378,8 @@ function startRound() {
   cutL.style.display = cutR.style.display = 'none';
   knife.style.display = 'none';
   hand.style.display = 'none'; hand.classList.remove('clickable');
-  seen = {}; patCount = 0; weighed = false; renderTracker();
-  currentType = randomType();
+  seen = {}; patCount = 0; weighed = false; pulseFeat = null; renderTracker();
+  currentType = nextType(); roundNum++;
   buildMelon(currentType);
   glCanvas.style.display = 'block';
   targetZ = 2.9; camera.position.z = 2.9;
