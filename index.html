@@ -106,24 +106,42 @@
   /* 进度追踪 */
   #tracker {
     position: absolute; top: 10px; left: 10px; z-index: 7;
-    background: rgba(13,31,12,.85);
+    background: rgba(13,31,12,.92);
     border: 3px solid var(--ink);
-    padding: 6px 10px; font-size: 12px; color: var(--paper);
+    box-shadow: 3px 3px 0 rgba(0,0,0,.4);
+    padding: 8px 12px; font-size: 15px; color: #fff;
+    text-shadow: 1px 1px 0 #000;
   }
-  #tracker b { color: var(--yellow); font-weight: normal; }
+  #tracker b { color: var(--yellow); font-weight: normal; margin: 0 2px; }
   .tdot {
-    display: inline-block; width: 10px; height: 10px; margin: 0 2px;
-    background: #33452f; border: 2px solid var(--ink); vertical-align: -1px;
+    display: inline-block; width: 13px; height: 13px; margin: 0 3px;
+    background: #33452f; border: 2px solid var(--ink); vertical-align: -2px;
   }
   .tdot.on { background: var(--yellow); }
 
   /* 顶部提示 */
   #hint {
     position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
-    z-index: 7; background: rgba(13,31,12,.85);
-    border: 3px solid var(--ink); padding: 5px 14px;
-    font-size: 13px; color: #cde6c9; white-space: nowrap;
+    z-index: 7; background: rgba(13,31,12,.92);
+    border: 3px solid var(--ink); padding: 7px 18px;
+    box-shadow: 3px 3px 0 rgba(0,0,0,.4);
+    font-size: 16px; color: #ffd54f; text-shadow: 1px 1px 0 #000;
+    white-space: nowrap;
   }
+
+  /* 通关弹窗 */
+  #endmodal {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(6, 14, 5, .82);
+    display: none; align-items: center; justify-content: center;
+  }
+  #endmodal.show { display: flex; }
+  #endmodal .mbox {
+    background: var(--panel); width: min(480px, 88vw);
+    padding: 30px 28px; text-align: center;
+  }
+  #endmodal .mtitle { font-size: 24px; color: var(--yellow); text-shadow: 2px 2px 0 var(--ink); margin-bottom: 14px; }
+  #endmodal .mtext { font-size: 15px; color: var(--paper); margin-bottom: 20px; line-height: 1.9; }
 
   /* 人物台词气泡 */
   .say {
@@ -215,9 +233,23 @@
   .card .verdict { margin-top: 8px; font-size: 13px; color: #ff9d9a; }
   .card.trap h3 { color: #ff8a80; }
 
+  /* ===== 称号徽章(页面右上角,图鉴之上) ===== */
+  #title-badge {
+    position: fixed; top: 12px; right: 12px; z-index: 60;
+    width: 204px; box-sizing: border-box;
+    background: rgba(13,31,12,.92);
+    border: 3px solid var(--ink);
+    box-shadow: 4px 4px 0 rgba(0,0,0,.45);
+    padding: 6px 10px;
+    font-size: 14px; font-weight: bold; color: var(--yellow);
+    text-shadow: 2px 2px 0 var(--ink);
+  }
+  #title-badge canvas { width: 18px; height: 18px; vertical-align: -4px; }
+
   /* ===== 开瓜图鉴(页面右上角) ===== */
   #collection {
-    position: fixed; top: 12px; right: 12px; z-index: 60;
+    position: fixed; top: 50px; right: 12px; z-index: 60;
+    width: 204px; box-sizing: border-box;
     background: rgba(13,31,12,.92);
     border: 3px solid var(--ink);
     box-shadow: 4px 4px 0 rgba(0,0,0,.45);
@@ -225,11 +257,17 @@
   }
   #collection .coll-title { font-size: 13px; color: var(--yellow); margin-bottom: 6px; }
   #collection.all .coll-title { color: #ffd54f; }
-  #coll-items { display: flex; gap: 8px; flex-wrap: wrap; }
+  #coll-items { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
   .coll-item { text-align: center; }
-  .coll-item canvas { width: 46px; height: 46px; display: block; border: 2px solid var(--ink); background: #24401e; }
-  .coll-item .lbl { font-size: 12px; color: var(--paper); margin-top: 2px; display: block; }
+  .coll-item canvas { width: 40px; height: 40px; display: block; border: 2px solid var(--ink); background: #24401e; }
+  .coll-item .lbl { font-size: 11px; color: var(--paper); margin-top: 1px; display: block; }
   #coll-count { font-size: 12px; color: #8fae88; margin-top: 6px; }
+
+  /* 图鉴可折叠(点标题展开/收起,手机端默认收起) */
+  #collection .coll-title { cursor: pointer; }
+  #collection .coll-title::after { content: ' ▾'; }
+  #collection.collapsed .coll-title::after { content: ' ▸'; }
+  #collection.collapsed #coll-items, #collection.collapsed #coll-count { display: none; }
 
   /* 追踪点呼吸提示("对准了,别动") */
   .tdot.pulse { background: #7d9a76; animation: pulse .5s steps(2) infinite; }
@@ -240,11 +278,50 @@
     padding: 26px 16px 36px; border-top: 3px solid #1e3a1a;
   }
 
+  /* ===== 手机端适配 ===== */
+  body { touch-action: manipulation; }
+  .stage { -webkit-user-select: none; user-select: none; }
+
   @media (max-width: 640px) {
-    header h1 { font-size: 24px; }
-    .say { max-width: 180px; font-size: 12px; }
-    #hint { font-size: 11px; }
-    #dlg-text { font-size: 13px; }
+    header { padding: 22px 10px 18px; }
+    header h1 { font-size: 20px; }
+    header .quote { font-size: 15px; padding: 6px 14px; }
+    #logo-melon, #logo-melon2 { width: 34px; height: 34px; }
+    main { padding: 20px 10px 50px; }
+    section { margin-top: 34px; }
+    h2 { font-size: 18px; }
+
+    /* 竖屏舞台加高,瓜更大更好转 */
+    .stage { aspect-ratio: 4 / 5; }
+    #tracker { font-size: 12px; padding: 5px 8px; top: 8px; left: 8px; }
+    .tdot { width: 10px; height: 10px; margin: 0 2px; }
+    #hint {
+      font-size: 12px; top: 42px; padding: 5px 10px;
+      white-space: normal; text-align: center;
+      width: max-content; max-width: 96%;
+    }
+    .say { max-width: 170px; font-size: 12px; }
+
+    /* 对白框+按钮窄屏适配 */
+    #dialog { left: 8px; right: 8px; bottom: 8px; padding: 10px; min-height: 84px; }
+    .pavatar { width: 54px; height: 54px; }
+    .pavatar img { transform: scale(2.7); }
+    #dlg-text { font-size: 14px; }
+    #dlg-actions { flex-wrap: wrap; gap: 8px; }
+    .px-btn { font-size: 14px; padding: 8px 14px; }
+
+    /* 图鉴卡片:六式单列,避坑两列 */
+    .cards { grid-template-columns: 1fr; }
+    .cards.four { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+    /* 右上角面板:手机端改为舞台上方文流内,不遮挡 */
+    #title-badge, #collection {
+      position: static; width: auto; margin: 0 0 10px;
+    }
+    #title-badge { font-size: 13px; display: inline-block; margin-right: 8px; }
+    .coll-item canvas { width: 29px; height: 29px; }
+    .coll-item .lbl { font-size: 10px; }
+    #coll-count { font-size: 11px; }
   }
 </style>
 </head>
@@ -263,6 +340,14 @@
   <!-- ========== 拍瓜实战 ========== -->
   <section id="game">
     <h2>拍瓜实战 · 瓜摊一日游</h2>
+
+    <!-- 称号徽章+开瓜图鉴:桌面端固定右上角;手机端在舞台上方文流内 -->
+    <div id="title-badge">称号 · <canvas id="title-icon" width="16" height="16"></canvas> <span id="title-text">生瓜蛋子</span></div>
+    <div id="collection">
+      <div class="coll-title">🍉 开瓜图鉴</div>
+      <div id="coll-items"></div>
+      <div id="coll-count">共开 0 个瓜</div>
+    </div>
     <div class="stage pxb" id="stage">
       <canvas id="bg" width="480" height="300"></canvas>
       <canvas id="actor-farmer" class="actor" width="60" height="96"></canvas>
@@ -287,7 +372,7 @@
         <div id="dlg-next">▼ 点击继续</div>
       </div>
     </div>
-    <p class="stage-note">操作:按住拖动旋转西瓜 · 滚轮缩放 · 左键点瓜 = 拍一拍 · 点手掌 = 掂一掂 · 对白框点击推进</p>
+    <p class="stage-note">操作:按住拖动旋转西瓜 · 滚轮/双指捏合缩放 · 点瓜 = 拍一拍 · 点手掌 = 掂一掂 · 对白框点击推进</p>
   </section>
 
   <!-- ========== 挑瓜六式 ========== -->
@@ -335,11 +420,13 @@
   </section>
 </main>
 
-<!-- 开瓜图鉴:右上角固定统计 -->
-<div id="collection">
-  <div class="coll-title">🍉 开瓜图鉴</div>
-  <div id="coll-items"></div>
-  <div id="coll-count">共开 0 个瓜</div>
+<!-- 通关弹窗 -->
+<div id="endmodal">
+  <div class="mbox pxb">
+    <div class="mtitle">🏆 挑瓜老手!</div>
+    <div class="mtext" id="endmodal-text"></div>
+    <button class="px-btn" id="btn-restart">重新练一轮</button>
+  </div>
 </div>
 
 <footer>
@@ -558,6 +645,7 @@ function drawCutHalf(id, side, type) {
 /* ---- 开瓜图鉴:右上角统计 ---- */
 var TYPE_LABEL = { ripe: '好瓜', raw: '生瓜', bad: '坏瓜', hollow: '空瓜' };
 var openedCounts = { ripe: 0, raw: 0, bad: 0, hollow: 0 };
+var guessRight = 0;   /* 猜对瓜型的次数,称号按它升级 */
 
 function drawMelonIcon(cv, type) {
   var ctx = cv.getContext('2d');
@@ -580,6 +668,55 @@ function drawMelonIcon(cv, type) {
   }
 }
 
+/* 称号系统:按"猜对"瓜型的次数升级(共 16 次判断机会) */
+var TITLES = ['生瓜蛋子', '挑瓜学徒', '挑瓜好手', '挑瓜老手', '瓜王'];
+var TITLE_MIN = [0, 4, 7, 10, 13];
+function currentTitleLv() {
+  var lv = 0;
+  for (var i = 0; i < TITLE_MIN.length; i++) if (guessRight >= TITLE_MIN[i]) lv = i;
+  return lv;
+}
+function currentTitle() { return TITLES[currentTitleLv()]; }
+
+/* 称号像素图标:瓜蛋 / 小刀 / 眼睛 / 墨镜 / 皇冠 */
+function drawTitleIcon(cv, lv) {
+  var g = cv.getContext('2d');
+  g.clearRect(0, 0, 16, 16);
+  function r(x, y, w, h, c) { g.fillStyle = c; g.fillRect(x, y, w, h); }
+  if (lv === 0) {                    /* 瓜蛋:带纹小青瓜 */
+    r(7, 1, 2, 2, '#6a4a2a');
+    r(4, 3, 8, 10, '#7cc47c'); r(3, 5, 10, 6, '#7cc47c');
+    r(6, 3, 1, 10, '#4a8f4a'); r(9, 3, 1, 10, '#4a8f4a');
+    r(4, 3, 2, 2, '#a8e0a8');
+  } else if (lv === 1) {             /* 学徒:斜放小刀 */
+    r(1, 12, 4, 3, '#6a4a2a'); r(4, 10, 2, 3, '#3a2a18');
+    r(5, 8, 3, 3, '#d8d8d8'); r(7, 6, 3, 3, '#d8d8d8');
+    r(9, 4, 3, 3, '#d8d8d8'); r(11, 2, 3, 3, '#d8d8d8');
+    r(6, 9, 1, 1, '#8a8a8a'); r(8, 7, 1, 1, '#8a8a8a'); r(10, 5, 1, 1, '#8a8a8a');
+  } else if (lv === 2) {             /* 好手:火眼金睛 */
+    r(2, 6, 12, 4, '#f5eeda'); r(4, 5, 8, 6, '#f5eeda');
+    r(6, 5, 4, 6, '#4caf50'); r(7, 6, 2, 4, '#101010');
+    r(7, 5, 1, 1, '#ffffff');
+    r(1, 5, 2, 1, '#101010'); r(13, 5, 2, 1, '#101010');
+  } else if (lv === 3) {             /* 老手:黑墨镜 */
+    r(0, 4, 2, 2, '#101010'); r(14, 4, 2, 2, '#101010');
+    r(1, 5, 14, 2, '#101010');
+    r(1, 7, 6, 5, '#262626'); r(9, 7, 6, 5, '#262626');
+    r(2, 8, 2, 2, '#4a6a8a'); r(10, 8, 2, 2, '#4a6a8a');
+  } else {                           /* 瓜王:镶宝皇冠 */
+    r(2, 5, 2, 3, '#ffd54f'); r(7, 3, 2, 5, '#ffd54f'); r(12, 5, 2, 3, '#ffd54f');
+    r(1, 4, 2, 2, '#ffd54f'); r(13, 4, 2, 2, '#ffd54f');
+    r(3, 7, 10, 4, '#ffd54f'); r(4, 6, 8, 2, '#ffd54f');
+    r(7, 8, 2, 2, '#e53935'); r(4, 8, 2, 2, '#7ec8e3'); r(10, 8, 2, 2, '#7ec8e3');
+    r(3, 11, 10, 2, '#d8a52e');
+  }
+}
+function renderTitle() {
+  var lv = currentTitleLv();
+  $('title-text').textContent = TITLES[lv];
+  drawTitleIcon($('title-icon'), lv);
+}
+
 function addToCollection(type) {
   openedCounts[type]++;
   var item = document.createElement('div');
@@ -594,13 +731,20 @@ function addToCollection(type) {
   $('coll-items').appendChild(item);
 
   var total = openedCounts.ripe + openedCounts.raw + openedCounts.bad + openedCounts.hollow;
-  $('coll-count').textContent = '共开 ' + total + ' 个 · 好' + openedCounts.ripe +
-    ' 生' + openedCounts.raw + ' 坏' + openedCounts.bad + ' 空' + openedCounts.hollow;
-  if (openedCounts.ripe && openedCounts.raw && openedCounts.bad && openedCounts.hollow) {
-    $('collection').classList.add('all');
-    $('collection').querySelector('.coll-title').textContent = '🏆 图鉴集齐!';
-  }
+  $('coll-count').textContent = '共开 ' + total + ' 个 · 猜对 ' + guessRight + ' · 猜错 ' + (total - guessRight);
+  var allGot = openedCounts.ripe && openedCounts.raw && openedCounts.bad && openedCounts.hollow;
+  $('collection').classList.toggle('all', !!allGot);
+  $('collection').querySelector('.coll-title').textContent =
+    (allGot ? '🏆 图鉴集齐! ' : '🍉 开瓜图鉴 ') + total + '/' + MAX_ROUNDS;
+  renderTitle();
 }
+
+/* 图鉴标题点击折叠/展开;手机端默认收起 */
+$('collection').querySelector('.coll-title').addEventListener('click', function () {
+  $('collection').classList.toggle('collapsed');
+});
+if (window.matchMedia('(max-width: 640px)').matches) $('collection').classList.add('collapsed');
+renderTitle();   /* 初始称号图标 */
 
 /* ================================================================
  * 二、音频:拍瓜 x4 / 劈瓜 / 对白哔哔
@@ -611,13 +755,23 @@ function actx() { if (!AC) AC = new (window.AudioContext || window.webkitAudioCo
 function knockSound(kind) {
   var ac = actx(), t = ac.currentTime;
   var cfg = {
-    ripe:   { f: 130, lp: 500,  dec: 0.16, g: 0.9,  w: 'sine' },
-    raw:    { f: 360, lp: 2200, dec: 0.30, g: 0.6,  w: 'triangle' },
-    bad:    { f: 95,  lp: 280,  dec: 0.10, g: 0.9,  w: 'sine' },
-    hollow: { f: 210, lp: 1000, dec: 0.42, g: 0.8,  w: 'sine', echo: 1 }
+    ripe:   { f: 130, lp: 500,  dec: 0.16, g: 1.5,  w: 'sine' },
+    raw:    { f: 360, lp: 2200, dec: 0.30, g: 1.2,  w: 'triangle' },
+    bad:    { f: 95,  lp: 280,  dec: 0.10, g: 1.5,  w: 'sine' },
+    hollow: { f: 210, lp: 1000, dec: 0.42, g: 1.4,  w: 'sine', echo: 1 }
   }[kind];
   [0, 0.2].forEach(function (dt) {
     var s = t + dt;
+    /* 拍击瞬态:一小段滤波噪声,拍出"肉感" */
+    var nb = ac.createBuffer(1, ac.sampleRate * 0.03, ac.sampleRate);
+    var nd = nb.getChannelData(0);
+    for (var ni = 0; ni < nd.length; ni++) nd[ni] = (Math.random() * 2 - 1) * (1 - ni / nd.length);
+    var ns = ac.createBufferSource(); ns.buffer = nb;
+    var nf = ac.createBiquadFilter(); nf.type = 'lowpass'; nf.frequency.value = cfg.lp * 2;
+    var ng = ac.createGain();
+    ng.gain.setValueAtTime(0.5, s); ng.gain.exponentialRampToValueAtTime(0.001, s + 0.03);
+    ns.connect(nf); nf.connect(ng); ng.connect(ac.destination);
+    ns.start(s);
     var o = ac.createOscillator(), gn = ac.createGain(), fl = ac.createBiquadFilter();
     fl.type = 'lowpass'; fl.frequency.value = cfg.lp;
     o.type = cfg.w;
@@ -667,26 +821,51 @@ function blip() {
   o.start(t); o.stop(t + 0.05);
 }
 
-/* 疯狂戴夫式外星语:每个字一个"哇啦"音节,瓜农低沉 / 华强略高 */
+/* 疯狂戴夫式外星语:共振峰元音合成,柔和像"说话"。瓜农低沉 / 华强略高 / 旁白中性 */
 function gibSyllable(who, code) {
   var ac = actx(), t = ac.currentTime;
-  var base = who === 'F' ? 95 : 145;
-  var f = base * (0.9 + (code % 7) * 0.07) * (0.96 + Math.random() * 0.08);
-  var o = ac.createOscillator();
-  o.type = 'sawtooth';
-  o.frequency.setValueAtTime(f * 0.85, t);
-  o.frequency.linearRampToValueAtTime(f * 1.2, t + 0.05);
-  o.frequency.linearRampToValueAtTime(f * 0.8, t + 0.12);
-  var bp = ac.createBiquadFilter();
-  bp.type = 'bandpass';
-  bp.frequency.value = 500 + (code % 5) * 260;
-  bp.Q.value = 2.2;
-  var g = ac.createGain();
-  g.gain.setValueAtTime(0.0001, t);
-  g.gain.exponentialRampToValueAtTime(0.18, t + 0.02);
-  g.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
-  o.connect(bp); bp.connect(g); g.connect(ac.destination);
-  o.start(t); o.stop(t + 0.17);
+  var base = who === 'F' ? 85 : (who === 'N' ? 110 : 138);
+  var jump = [0.85, 1.0, 1.2, 0.92, 1.32, 1.05, 0.78][code % 7];
+  var f = base * jump * (0.96 + Math.random() * 0.08);
+  var out = ac.createGain();
+  out.gain.setValueAtTime(0.0001, t);
+  out.gain.exponentialRampToValueAtTime(0.32, t + 0.02);
+  out.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+  var lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2400;
+  out.connect(lp); lp.connect(ac.destination);
+  if (code % 3 === 0) {
+    /* 爆破音 "啵/叭":三角波柔和滑落 */
+    var o = ac.createOscillator(), g = ac.createGain();
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(f * 2.0, t);
+    o.frequency.exponentialRampToValueAtTime(f * 0.95, t + 0.07);
+    g.gain.setValueAtTime(0.5, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+    o.connect(g); g.connect(out);
+    o.start(t); o.stop(t + 0.11);
+  } else {
+    /* 元音 "哇/啦":三角波 + 双共振峰,像真正的 vowel */
+    var VOWELS = [[730, 1090], [530, 1840], [390, 1990], [570, 840], [440, 1020]]; /* a e i o u */
+    var vw = VOWELS[code % 5];
+    var fs = who === 'F' ? 0.92 : (who === 'H' ? 1.08 : 1.0);
+    var o2 = ac.createOscillator();
+    o2.type = 'triangle';
+    o2.frequency.setValueAtTime(f * 0.9, t);
+    o2.frequency.linearRampToValueAtTime(f * 1.18, t + 0.05);
+    o2.frequency.linearRampToValueAtTime(f * 0.85, t + 0.13);
+    /* 颤音,更像人声 */
+    var lfo = ac.createOscillator(), lg = ac.createGain();
+    lfo.frequency.value = 6.5; lg.gain.value = f * 0.035;
+    lfo.connect(lg); lg.connect(o2.frequency);
+    [[vw[0], 0.9], [vw[1], 0.45]].forEach(function (fm) {
+      var bp = ac.createBiquadFilter(), bg = ac.createGain();
+      bp.type = 'bandpass'; bp.frequency.value = fm[0] * fs; bp.Q.value = 1.1;
+      bg.gain.value = fm[1];
+      o2.connect(bp); bp.connect(bg); bg.connect(out);
+    });
+    o2.start(t); o2.stop(t + 0.18);
+    lfo.start(t); lfo.stop(t + 0.18);
+  }
 }
 
 /* 揭晓戏剧性配乐:好瓜欢快 / 生瓜下滑 / 坏瓜刺耳 / 空瓜滑稽 */
@@ -697,7 +876,7 @@ function sting(kind) {
     o.type = type || 'square';
     o.frequency.value = f;
     gn.gain.setValueAtTime(0.0001, t);
-    gn.gain.exponentialRampToValueAtTime(g0 || 0.1, t + 0.02);
+    gn.gain.exponentialRampToValueAtTime(g0 || 0.16, t + 0.02);
     gn.gain.exponentialRampToValueAtTime(0.001, t + dur);
     o.connect(gn); gn.connect(ac.destination);
     o.start(t); o.stop(t + dur + 0.05);
@@ -735,41 +914,41 @@ var DELIVER_F = ['这个怎么样?', '来一个?包甜!', '刚摘的,您瞧瞧!'
 var LINES = {
   look: {
     stripe: {
-      ripe:   ['条纹深绿清晰,间距宽,敞亮。', '纹路跟刀刻的似的,清楚。'],
-      raw:    ['条纹发浅发糊,挤成一团,没长开。', '这纹路糊的,一看就没长足。'],
-      bad:    ['纹路还行,就是皮色发暗,没光泽。', '皮色乌突突的,不新鲜。'],
-      hollow: ['条纹清楚分明,卖相挺好。', '纹路没毛病,漂亮。']
+      ripe:   ['条纹深绿清晰,间距宽,敞亮。', '纹路跟刀刻的似的,清楚。', '纹路清清楚楚,间距够宽。', '条纹又深又直,长得规矩。'],
+      raw:    ['条纹发浅发糊,挤成一团,没长开。', '这纹路糊的,一看就没长足。', '纹路浅得都快看不见了。', '条纹挤挤挨挨,没长开。'],
+      bad:    ['纹路还行,就是皮色发暗,没光泽。', '皮色乌突突的,不新鲜。', '纹路倒是在,就是皮色发乌。', '皮面发暗,搁久了。'],
+      hollow: ['条纹清楚分明,卖相挺好。', '纹路没毛病,漂亮。', '条纹清晰,卖相没得挑。', '纹路挺漂亮。']
     },
     spot: {
-      ripe:   ['黄斑橙黄油亮,贴着地睡够了日子。', '这斑黄得正,地里熟透的。'],
-      raw:    ['斑发白,还泛青——没晒够就摘了。', '这斑白生生的,嫩瓜。'],
-      bad:    ['斑暗褐,边上还有磕伤烂斑。', '这块烂斑看见没?有日子了。'],
-      hollow: ['斑黄澄澄的,卖相不赖。', '黄斑挺正,看着没问题。']
+      ripe:   ['黄斑橙黄油亮,贴着地睡够了日子。', '这斑黄得正,地里熟透的。', '黄斑又大又黄,晒足了太阳。', '这块地黄得流油,熟瓜。'],
+      raw:    ['斑发白,还泛青——没晒够就摘了。', '这斑白生生的,嫩瓜。', '斑发白发青,没晒够日子。', '斑这么白,摘急了。'],
+      bad:    ['斑暗褐,边上还有磕伤烂斑。', '这块烂斑看见没?有日子了。', '斑色发暗还有伤,不新鲜。', '烂斑都在这儿了,搁挺久了。'],
+      hollow: ['斑黄澄澄的,卖相不赖。', '黄斑挺正,看着没问题。', '黄斑挺正。', '斑色正常,挑不出毛病。']
     },
     navel: {
-      ripe:   ['脐眼小,还往里凹,皮薄的好瓜。', '脐小内凹,标致。'],
-      raw:    ['脐眼大,往外凸,皮厚瓤少的命。', '这脐凸得跟小馒头似的,生。'],
-      bad:    ['脐眼发黑,边上还裂了。', '脐都黑了,放不住的东西。'],
-      hollow: ['脐小内凹,正常。', '脐眼没毛病。']
+      ripe:   ['脐眼小,还往里凹,皮薄的好瓜。', '脐小内凹,标致。', '脐眼小而凹,皮薄。', '脐收得紧,好瓜相。'],
+      raw:    ['脐眼大,往外凸,皮厚瓤少的命。', '这脐凸得跟小馒头似的,生。', '脐眼又大又凸,皮厚。', '脐凸成这样,生瓜蛋子。'],
+      bad:    ['脐眼发黑,边上还裂了。', '脐都黑了,放不住的东西。', '脐眼发黑带裂,放不住了。', '脐都变色了,有日子了。'],
+      hollow: ['脐小内凹,正常。', '脐眼没毛病。', '脐小内凹,没毛病。', '脐眼正常。']
     },
     stem: {
-      ripe:   ['瓜蒂干枯打卷,藤上熟透了才摘的。', '蒂都干成小卷了,时候到了。'],
-      raw:    ['瓜蒂直挺挺的,带着青绿,水灵得反常。', '你看这蒂,青得很——摘早了。'],
-      bad:    ['蒂是干了,可根部发软,不对劲。', '干枯是干枯,就是根上发绵。'],
-      hollow: ['蒂干枯打卷,看着没毛病。', '瓜蒂正常。']
+      ripe:   ['瓜蒂干枯打卷,藤上熟透了才摘的。', '蒂都干成小卷了,时候到了。', '蒂枯得打卷,自然熟的。', '瓜蒂干卷,熟到位了。'],
+      raw:    ['瓜蒂直挺挺的,带着青绿,水灵得反常。', '你看这蒂,青得很——摘早了。', '蒂青绿直挺,摘早了。', '这蒂水灵的,生。'],
+      bad:    ['蒂是干了,可根部发软,不对劲。', '干枯是干枯,就是根上发绵。', '蒂枯根绵,不对劲。', '蒂是干了,根却发软。'],
+      hollow: ['蒂干枯打卷,看着没毛病。', '瓜蒂正常。', '瓜蒂干枯,正常。', '蒂没毛病。']
     }
   },
   pat: {
-    ripe:   ['“嘭、嘭”——浑厚,震手,好动静。', '声儿发闷带震感,熟透了。'],
-    raw:    ['“当、当”——清脆发飘,像敲在硬地上。', '声太脆了,一兜生水。'],
-    bad:    ['“噗、噗”——发闷发哑,没精气神。', '这声儿蔫的,里头怕是糟了。'],
-    hollow: ['“空、空”——有股子空洞的回响。', '听这回音,里头悬。']
+    ripe:   ['“嘭、嘭”——浑厚,震手,好动静。', '声儿发闷带震感,熟透了。', '“砰、砰”——又闷又沉,震得手心麻。', '这动静瓷实,熟瓜的声。'],
+    raw:    ['“当、当”——清脆发飘,像敲在硬地上。', '声太脆了,一兜生水。', '“梆、梆”——脆得发干,像拍门板。', '声儿太清太飘,生的。'],
+    bad:    ['“噗、噗”——发闷发哑,没精气神。', '这声儿蔫的,里头怕是糟了。', '“噗、噗”——蔫了吧唧,像拍棉花。', '声发哑,里头怕是坏了。'],
+    hollow: ['“空、空”——有股子空洞的回响。', '听这回音,里头悬。', '“咚、咚”——空落落的带回音。', '这空响,瓤怕是空了。']
   },
   weigh: {
-    ripe:   ['个大却不压手,水分都化成糖了。', '偏轻,沙瓤的料。'],
-    raw:    ['死沉死沉的,一肚子生水。', '这么沉?水没化糖,生。'],
-    bad:    ['分量还行,托着发绵,不瓷实。', '手感发绵,不新鲜。'],
-    hollow: ['轻得反常,晃着像有空隙。', '个儿这么大,分量呢?空了吧。']
+    ripe:   ['个大却不压手,水分都化成糖了。', '偏轻,沙瓤的料。', '不压手,糖分足了。', '偏轻,起沙了。'],
+    raw:    ['死沉死沉的,一肚子生水。', '这么沉?水没化糖,生。', '沉甸甸的,全是水。', '这么坠手,生的。'],
+    bad:    ['分量还行,托着发绵,不瓷实。', '手感发绵,不新鲜。', '托着发绵,不瓷实。', '手感软塌塌的,不新鲜。'],
+    hollow: ['轻得反常,晃着像有空隙。', '个儿这么大,分量呢?空了吧。', '轻飘飘的,个大量轻。', '分量对不上个头,空的。']
   },
   pre: {
     ripe: [
@@ -858,7 +1037,7 @@ function showDlgLine() {
   dlgTimer = setInterval(function () {
     i++;
     span.textContent = full.slice(0, i);
-    if (ln.gib) gibSyllable(ln.who, full.charCodeAt(i - 1));   // 外星语配音,逐字对应
+    gibSyllable(ln.who === 'N' ? 'N' : ln.who, full.charCodeAt(i - 1));   // 每句话都配外星语
     if (i >= full.length) finishType(ln);
   }, 45);
 }
@@ -925,18 +1104,48 @@ function randomType() {
   for (var k in TYPES) { acc += TYPES[k].w; if (r < acc) return k; }
   return 'ripe';
 }
-/* 前四瓜保底:好/生/坏/空洗牌后各出现一次,之后随机 */
+/* 保底规则:前四个"开"的瓜必为好/生/坏/空各一个(洗牌随机顺序);
+   换瓜没开不算数,递来的还是同类型新瓜;开满四个之后纯随机 */
 var roundNum = 0;
-var firstFour = (function () {
+function shuffleFour() {
   var a = ['ripe', 'raw', 'bad', 'hollow'];
   for (var i = a.length - 1; i > 0; i--) {
     var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t;
   }
   return a;
-})();
-function nextType() {
-  return roundNum < 4 ? firstFour[roundNum] : randomType();
 }
+var firstFour = shuffleFour();
+function openedTotal() {
+  return openedCounts.ripe + openedCounts.raw + openedCounts.bad + openedCounts.hollow;
+}
+function nextType() {
+  return openedTotal() < 4 ? firstFour[openedTotal()] : randomType();
+}
+
+/* 最多挑 16 个瓜,开完弹窗毕业 */
+var MAX_ROUNDS = 16;
+function showEndModal() {
+  $('endmodal-text').innerHTML =
+    MAX_ROUNDS + ' 次判断:猜对 ' + guessRight + ' 个 · 猜错 ' + (MAX_ROUNDS - guessRight) + ' 个<br>' +
+    '(好' + openedCounts.ripe + ' 生' + openedCounts.raw +
+    ' 坏' + openedCounts.bad + ' 空' + openedCounts.hollow + ')' +
+    '<br>最终称号:' + currentTitle() +
+    '<br>你已经是个挑瓜老手了,快去买瓜吧~';
+  $('endmodal').classList.add('show');
+}
+$('btn-restart').addEventListener('click', function () {
+  $('endmodal').classList.remove('show');
+  openedCounts = { ripe: 0, raw: 0, bad: 0, hollow: 0 };
+  guessRight = 0;
+  $('coll-items').innerHTML = '';
+  $('coll-count').textContent = '共开 0 个瓜';
+  $('collection').classList.remove('all');
+  $('collection').querySelector('.coll-title').textContent = '🍉 开瓜图鉴 0/16';
+  renderTitle();
+  roundNum = 0;
+  firstFour = shuffleFour();
+  startRound();
+});
 
 var glCanvas = $('gl');
 var renderer = new THREE.WebGLRenderer({ canvas: glCanvas, alpha: true, antialias: false });
@@ -951,23 +1160,40 @@ var melonGroup = new THREE.Group(); scene.add(melonGroup);
 var melonMesh = null;
 var spotUV = { u: 0.3, v: 0.6 };
 
+/* 每种瓜 4 种形态:条纹疏密/粗细、瓜斑大小、瓜身比例各不相同 */
+var VARIANTS = [
+  { stripes: 10, sw: 1.0,  spot: 1.0,  mesh: [1, 0.95, 1] },
+  { stripes: 12, sw: 0.8,  spot: 0.85, mesh: [1.06, 0.9, 0.98] },
+  { stripes: 9,  sw: 1.25, spot: 1.15, mesh: [0.95, 1.0, 0.95] },
+  { stripes: 11, sw: 1.0,  spot: 1.0,  mesh: [1, 0.92, 1.05] }
+];
+var RIND_BASES = {
+  ripe:   ['#3f9e46', '#3a9440', '#46a34c', '#3d9848'],
+  raw:    ['#63b565', '#6abc68', '#5aae60', '#66b86a'],
+  bad:    ['#5a8142', '#557a3e', '#5f8545', '#587e41'],
+  hollow: ['#3f9e46', '#429e48', '#3b9643', '#45a04b']
+};
+
 /* 块状像素纹理 */
-function makeRindTexture(type, spot) {
+function makeRindTexture(type, spot, v) {
+  var V = VARIANTS[v || 0];
   var c = document.createElement('canvas'); c.width = 128; c.height = 64;
   var g = c.getContext('2d');
-  var base = { ripe: '#3f9e46', raw: '#63b565', bad: '#5a8142', hollow: '#3f9e46' }[type];
+  var base = RIND_BASES[type][v || 0];
   var dark = { ripe: '#175c1e', raw: 'rgba(23,92,30,.45)', bad: '#2c4a1e', hollow: '#175c1e' }[type];
   g.fillStyle = base; g.fillRect(0, 0, 128, 64);
-  for (var i = 0; i < 10; i++) {
-    var cx = (i + 0.5) * 12.8, ph = i * 1.7;
+  var step = 128 / V.stripes;
+  var sw = Math.max(1, Math.round((type === 'raw' ? 3 : 5) * V.sw));
+  for (var i = 0; i < V.stripes; i++) {
+    var cx = (i + 0.5) * step, ph = i * 1.7;
     g.fillStyle = dark;
     for (var y = 0; y < 64; y += 2) {
       var xo = Math.round((Math.sin(y * 0.32 + ph) * 2.2 + Math.sin(y * 0.08 + i * 2) * 3) / 2) * 2;
-      g.fillRect(Math.round(cx + xo - 2), y, type === 'raw' ? 3 : 5, 2);
+      g.fillRect(Math.round(cx + xo - sw / 2), y, sw, 2);
     }
   }
   // 块状瓜斑
-  var sx = spot.u * 128, sy = spot.v * 64, rx = 8, ry = 6;
+  var sx = spot.u * 128, sy = spot.v * 64, rx = 8 * V.spot, ry = 6 * V.spot;
   var sc = { ripe: '#d8b45e', hollow: '#d8b45e', raw: '#e0ddc6', bad: '#8a6d3f' }[type];
   g.fillStyle = sc;
   for (var yy = -ry; yy <= ry; yy += 2) {
@@ -1036,14 +1262,20 @@ function buildMelon(type) {
     });
   }
   spotUV = { u: 0.26 + Math.random() * 0.08, v: 0.56 + Math.random() * 0.08 };
+  var v = Math.floor(Math.random() * 4);
+  var V = VARIANTS[v];
   melonMesh = new THREE.Mesh(
     new THREE.SphereGeometry(1, 40, 30),
-    new THREE.MeshLambertMaterial({ map: makeRindTexture(type, spotUV) })
+    new THREE.MeshLambertMaterial({ map: makeRindTexture(type, spotUV, v) })
   );
-  melonMesh.scale.set(1, 0.95, 1);
+  melonMesh.scale.set(V.mesh[0], V.mesh[1], V.mesh[2]);
   melonGroup.add(melonMesh);
-  melonGroup.add(makeStem(type));
-  melonGroup.add(makeNavel(type));
+  // 瓜蒂/瓜脐贴在瓜身上下两端,随瓜身比例微调
+  var dy = V.mesh[1] - 0.95;
+  var stemG = makeStem(type); stemG.position.y = dy;
+  var navelG = makeNavel(type); navelG.position.y = -dy;
+  melonGroup.add(stemG);
+  melonGroup.add(navelG);
   melonGroup.rotation.set(0.15, Math.random() * 6.28, 0);
   melonGroup.position.set(0, 0, 0);
   melonGroup.scale.set(1, 1, 1);
@@ -1064,7 +1296,7 @@ var glSize = 0;
 
 function layout() {
   var W = stage.clientWidth, H = stage.clientHeight;
-  glSize = Math.round(Math.min(W * 0.46, H * 0.78));
+  glSize = Math.round(Math.min(W * (W < 500 ? 0.62 : 0.46), H * 0.78));
   glCanvas.style.width = glSize + 'px'; glCanvas.style.height = glSize + 'px';
   glCanvas.style.left = Math.round((W - glSize) / 2) + 'px';
   glCanvas.style.bottom = Math.round(H * 0.11) + 'px';
@@ -1078,7 +1310,7 @@ function layout() {
   farmerEl.style.width = aw + 'px'; farmerEl.style.height = Math.round(aw * 96 / 60) + 'px';
   farmerEl.style.bottom = Math.round(H * 0.18) + 'px';
 
-  var hw = Math.round(W * 0.10);
+  var hw = Math.round(W * 0.17);
   hand.style.width = hw + 'px'; hand.style.height = Math.round(hw * 30 / 40) + 'px';
 
   var kw = Math.round(W * 0.075);
@@ -1094,14 +1326,31 @@ function layout() {
 }
 window.addEventListener('resize', layout);
 
-/* 拖拽旋转 / 缩放(缩放限幅:整瓜永远完整可见) */
+/* 拖拽旋转 / 缩放:滚轮或双指捏合(缩放限幅:整瓜永远完整可见) */
 var dragging = false, px0 = 0, py0 = 0, moved = 0, targetZ = 2.9;
+var activePtrs = {}, pinchD = 0, wasPinch = false;
+function ptrPair() { var k = Object.keys(activePtrs); return [activePtrs[k[0]], activePtrs[k[1]]]; }
 glCanvas.addEventListener('pointerdown', function (e) {
   if (state !== 'look' && state !== 'pat' && state !== 'weigh') return;
-  dragging = true; moved = 0; px0 = e.clientX; py0 = e.clientY;
+  activePtrs[e.pointerId] = [e.clientX, e.clientY];
+  var n = Object.keys(activePtrs).length;
+  if (n === 1) { dragging = true; moved = 0; px0 = e.clientX; py0 = e.clientY; }
+  else if (n === 2) {
+    dragging = false; wasPinch = true;
+    var p = ptrPair(); pinchD = Math.hypot(p[0][0] - p[1][0], p[0][1] - p[1][1]);
+  }
   glCanvas.setPointerCapture(e.pointerId);
 });
 glCanvas.addEventListener('pointermove', function (e) {
+  if (!(e.pointerId in activePtrs)) return;
+  activePtrs[e.pointerId] = [e.clientX, e.clientY];
+  /* 双指:捏合缩放,不旋转 */
+  if (Object.keys(activePtrs).length === 2) {
+    var p = ptrPair(), d = Math.hypot(p[0][0] - p[1][0], p[0][1] - p[1][1]);
+    if (pinchD) targetZ = Math.max(2.55, Math.min(3.4, targetZ - (d - pinchD) * 0.006));
+    pinchD = d;
+    return;
+  }
   if (!dragging) return;
   var dx = e.clientX - px0, dy = e.clientY - py0;
   moved += Math.abs(dx) + Math.abs(dy);
@@ -1110,10 +1359,19 @@ glCanvas.addEventListener('pointermove', function (e) {
   melonGroup.rotation.x += dy * 0.009;
   melonGroup.rotation.x = Math.max(-1.3, Math.min(1.3, melonGroup.rotation.x));
 });
-glCanvas.addEventListener('pointerup', function () {
+function ptrEnd(e) {
+  delete activePtrs[e.pointerId];
+  var n = Object.keys(activePtrs).length;
+  if (n < 2) pinchD = 0;
   dragging = false;
-  if (moved < 6 && state === 'pat') doPat();
-});
+  /* 单指轻点才算拍瓜,双指捏合后不触发 */
+  if (n === 0) {
+    if (moved < 6 && !wasPinch && state === 'pat') doPat();
+    wasPinch = false;
+  }
+}
+glCanvas.addEventListener('pointerup', ptrEnd);
+glCanvas.addEventListener('pointercancel', ptrEnd);
 glCanvas.addEventListener('wheel', function (e) {
   e.preventDefault();
   targetZ = Math.max(2.55, Math.min(3.4, targetZ + e.deltaY * 0.0015));
@@ -1202,7 +1460,8 @@ function setHint(t) { hint.textContent = t; }
     var dirs = {
       stem: new THREE.Vector3(0, 1, 0),
       navel: new THREE.Vector3(0, -1, 0),
-      spot: uvToDir(spotUV.u, spotUV.v)
+      /* 球体 UV 是 (u, 1-v),瓜斑的 3D 方向要用 1-v 换算,否则和纹理位置上下镜像 */
+      spot: uvToDir(spotUV.u, 1 - spotUV.v)
     };
     var maxDot = -1, maxAll = -1;
     for (var k in dirs) {
@@ -1256,9 +1515,17 @@ function setHint(t) { hint.textContent = t; }
 
 /* ---- ② 拍瓜 ---- */
 function doPat() {
-  knockSound(TYPES[currentType].sound);
-  ripple();
-  // 手掌从右侧拍下
+  // 手掌从右侧拍下,拍到瓜的那一刻才出声+瓜身轻颤(380ms 动画,中点 190ms 触瓜)
+  setTimeout(function () {
+    knockSound(TYPES[currentType].sound);
+    ripple();
+    // 瓜身轻颤(西瓜不是皮球,不变形)
+    tween(200, function (k) {
+      melonGroup.rotation.z = Math.sin(k * Math.PI * 4) * 0.02 * (1 - k);
+    }, function () { melonGroup.rotation.z = 0; });
+  }, 185);
+  // 听完声再说话
+  setTimeout(function () { say('H', pick(LINES.pat[currentType])); }, 480);
   var W = stage.clientWidth, H = stage.clientHeight;
   var hw = hand.offsetWidth;
   hand.classList.remove('clickable');
@@ -1271,13 +1538,7 @@ function doPat() {
     var p = k < 0.5 ? k * 2 : (1 - k) * 2;
     hand.style.left = Math.round(x0 - glSize * 0.2 * p) + 'px';
   }, function () { hand.style.display = 'none'; hand.style.transform = ''; });
-  // 瓜身轻颤
-  tween(280, function (k) {
-    var s = 1 - 0.07 * Math.sin(k * Math.PI);
-    melonGroup.scale.set(1 / Math.sqrt(s), s, 1 / Math.sqrt(s));
-  });
   patCount++;
-  say('H', pick(LINES.pat[currentType]));
   renderTracker();
   if (patCount === 1) setHint('再拍一下,听准了');
   if (patCount >= 2) {
@@ -1301,16 +1562,34 @@ function doWeigh() {
   say('H', pick(LINES.weigh[currentType]));
   renderTracker();
   setHint('心里大概有数了……');
-  setTimeout(startPre, 1600);
+  setTimeout(enterDecide, 1600);
 }
 
-/* ---- ④ 对白 → 劈瓜 → 揭晓 ---- */
-function startPre() {
-  state = 'dialog';
-  hush();
-  setHint('点击对白框继续');
+/* ---- ③.⑤ 决断:玩家猜瓜型(好/生/空/坏 四选一),猜完华强替你放话,再开瓜见分晓 ---- */
+function enterDecide() {
+  state = 'decide';
   hand.style.display = 'none';
-  playDialog(LINES.pre[currentType], function () { chop(); return false; });
+  hush();
+  setHint('看也看了,拍也拍了,掂也掂了——这瓜是哪种?你来断!');
+  playDialog([{ who: 'F', text: '怎么样?是生是熟,您给断一断!' }], function () {
+    dlgShowButtons([
+      { label: '🍉 好瓜', fn: function () { guessRound('ripe'); } },
+      { label: '🥚 生瓜', fn: function () { guessRound('raw'); } },
+      { label: '🕳️ 空瓜', fn: function () { guessRound('hollow'); } },
+      { label: '🤢 坏瓜', fn: function () { guessRound('bad'); } }
+    ]);
+    return true;   // 保留对白框
+  });
+}
+var lastGuessRight = false;
+function guessRound(g) {
+  dlgBox.classList.remove('show');
+  lastGuessRight = (g === currentType);
+  if (lastGuessRight) guessRight++;
+  /* 华强按你断的结果放话,再开瓜 */
+  state = 'dialog';
+  setHint('点击对白框继续');
+  playDialog(LINES.pre[g], function () { chop(); return false; });
 }
 function chop() {
   state = 'chop';
@@ -1338,7 +1617,9 @@ function chop() {
     addToCollection(currentType);    // 图鉴+1
     setTimeout(function () {
       state = 'post';
-      playDialog(LINES.post[currentType], function () {
+      var verdict = { who: 'N', text: lastGuessRight ? '猜对了!' : '看走眼了……' };
+      playDialog([verdict].concat(LINES.post[currentType]), function () {
+        if (roundNum >= MAX_ROUNDS) { showEndModal(); return true; }
         dlgShowButtons([{ label: '🍉 再挑一个', fn: function () { startRound(); } }]);
         return true;   // 保留对白框
       });
